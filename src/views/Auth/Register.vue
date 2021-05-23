@@ -100,7 +100,11 @@
             </form>
         </div>
         <div>
-            <div><a class="btn btn-primary" href="/login">Back</a></div>
+            <div>
+                <router-link class="btn btn-primary" to="/login"
+                    >Back</router-link
+                >
+            </div>
             <input
                 value="Sign Up"
                 type="submit"

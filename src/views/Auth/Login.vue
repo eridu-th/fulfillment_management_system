@@ -45,10 +45,12 @@
             <button type="submit" class="btn btn-primary">Login</button>
             <div>
                 <div>
-                    <a href="/register">Sign Up</a>
+                    <router-link to="register">Sing Up</router-link>
                 </div>
                 <div>
-                    <a href="/forgetpassword">Forget Password?</a>
+                    <router-link to="/forgetpassword"
+                        >Forget Password</router-link
+                    >
                 </div>
             </div>
         </form>

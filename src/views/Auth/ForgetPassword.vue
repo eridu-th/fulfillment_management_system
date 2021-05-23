@@ -83,7 +83,9 @@
         </div>
         <hr />
         <div id="backToLogin">
-            <a class="btn btn-secondary" href="/login">Back to Login</a>
+            <router-link class="btn btn-secondary" to="/login"
+                >Back to Login</router-link
+            >
         </div>
     </div>
 </template>
