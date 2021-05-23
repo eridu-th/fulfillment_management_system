@@ -17,7 +17,8 @@
     "nouislider": "14.6.0",
     "vue": "3.0.5",
     "vue-router": "4.0.1",
-    "vue-toastification": "1.7.11"
+    "vue-toastification": "1.7.11",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.5.10",

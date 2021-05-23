@@ -1,16 +1,19 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
 import DashboardLayout from "@/layout/DashboardLayout";
 import AuthLayout from "@/layout/AuthLayout";
 
-import Dashboard from "../views/Dashboard.vue";
-import Icons from "../views/Icons.vue";
-import Maps from "../views/Maps.vue";
-import Profile from "../views/UserProfile.vue";
-import Tables from "../views/Tables.vue";
+import Dashboard from "../views/Pages/Dashboard.vue";
+import Icons from "../views/Pages/Icons.vue";
+import Maps from "../views/Pages/Maps.vue";
+import Profile from "../views/Pages/UserProfile.vue";
+import Tables from "../views/Pages/Tables.vue";
 
-import Login from "../views/Login.vue";
-import Register from "../views/Register.vue";
+import Login from "../views/Auth/Login.vue";
+import Register from "../views/Auth/Register.vue";
+import ForgetPassword from "../views/Auth/ForgetPassword.vue";
+
+import store from '../store/index';
 
 const routes = [
   {
@@ -60,14 +63,43 @@ const routes = [
         name: "register",
         components: { default: Register },
       },
+      {
+        path: "/forgetpassword",
+        name: "forgetpassword",
+        components: { default: ForgetPassword },
+      },
     ],
   },
+  { path: '/:notFound(.*)', redirect: '/' }
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   linkActiveClass: "active",
   routes,
+});
+
+router.beforeEach(async function (to, from, next) {
+  if (to.path !== '/login' &&
+    to.path !== '/register' &&
+    to.path !== '/forgetpassword') {
+    const token = localStorage.getItem("token");
+    if (token) {
+      await store.dispatch({
+        type: "auth/checkLocalToken",
+        token,
+      });
+      if (!store.getters["auth/token"]) {
+        next({ name: 'login' });
+      } else {
+        next();
+      }
+    } else {
+      next({ name: 'login' });
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
