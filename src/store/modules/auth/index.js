@@ -11,6 +11,9 @@ export default {
         return {
             endpoints: {
                 login: `${host}/users/login`,
+                logout: `${host}/users/logout`,
+                logoutAll: `${host}/users/logoutAll`,
+                userInfo: `${host}/users/me`, // get, put, delete
                 header: `${host}/header`,
                 checkToken: `${host}/checkToken`,
                 resetToken: `${host}/resetToken`,
@@ -24,6 +27,12 @@ export default {
             token: null,
             headers: null,
             error: null,
+            user: {
+                name: '',
+                phone: '',
+                email: '',
+                role: '',
+            },
         }
     },
     getters,

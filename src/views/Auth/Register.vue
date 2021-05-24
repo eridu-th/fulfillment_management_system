@@ -7,7 +7,12 @@
         </div>
         <h1>Register</h1>
         <div id="form_wrapper">
-            <form @submit.prevent="register" action="" id="soibear_signup_form" class="form-group">
+            <form
+                @submit.prevent="register"
+                action=""
+                id="soibear_signup_form"
+                class="form-group"
+            >
                 <div class="input-group mt-3 mb-3">
                     <span class="input-group-text"
                         ><i class="fas fa-user"></i
@@ -78,8 +83,13 @@
                         :class="invalid"
                         required
                     />
-                    <span @click="togglePassword('showPassword')" class="input-group-text"
-                        ><i class="fas" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i
+                    <span
+                        @click="togglePassword('showPassword')"
+                        class="input-group-text"
+                        ><i
+                            class="fas"
+                            :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                        ></i
                     ></span>
                     <div class="invalid-feedback">
                         Your passwords do not match!
@@ -99,8 +109,15 @@
                         :class="invalid"
                         required
                     />
-                    <span @click="togglePassword('showConfirmPassword')" class="input-group-text"
-                        ><i class="fas" :class="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i
+                    <span
+                        @click="togglePassword('showConfirmPassword')"
+                        class="input-group-text"
+                        ><i
+                            class="fas"
+                            :class="
+                                showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'
+                            "
+                        ></i
                     ></span>
                     <div class="invalid-feedback">
                         Your passwords do not match!
@@ -131,9 +148,9 @@ export default {
         return {
             name: "",
             email: "",
-            phone: '',
+            phone: "",
             password: "",
-            confirmPassword: '',
+            confirmPassword: "",
             showPassword: false,
             showConfirmPassword: false,
             matchingPassword: false,
@@ -172,29 +189,29 @@ export default {
             this.checkPhoneTimer = setTimeout(() => {
                 this.validatePhone();
             }, this.timer);
-        }
+        },
     },
     computed: {
         invalidPhone() {
             if (this.validPhone) {
-                return 'is-valid';
+                return "is-valid";
             } else if (this.phone && !this.validPhone) {
-                return 'is-invalid';
+                return "is-invalid";
             } else {
-                return '';
+                return "";
             }
         },
         invalidEmail() {
             if (this.validEmail) {
-                return 'is-valid';
+                return "is-valid";
             } else if (this.email && !this.validEmail) {
-                return 'is-invalid';
+                return "is-invalid";
             } else {
-                return '';
+                return "";
             }
         },
         invalid() {
-            let classType = '';
+            let classType = "";
             if (
                 this.matchingPassword &&
                 this.password === this.confirmPassword &&
@@ -211,7 +228,7 @@ export default {
         },
     },
     methods: {
-        togglePassword(state = '') {
+        togglePassword(state = "") {
             if (state) {
                 this[state] = !this[state];
             }
@@ -223,17 +240,24 @@ export default {
             await this.validatePhone();
             if (!this.validPhone) return false;
 
-            if (!this.password || !this.confirmPassword || !this.email || this.name || this.phone) return false;
+            if (
+                !this.password ||
+                !this.confirmPassword ||
+                !this.email ||
+                this.name ||
+                this.phone
+            )
+                return false;
             if (this.password !== this.confirmPassword) return false;
-            
+
             return true;
         },
         async register() {
             if (this.validEmail && this.validPhone && this.matchingPassword) {
-                const endpoints = this.$store.getters['auth/endpoints'];
+                const endpoints = this.$store.getters["auth/endpoints"];
                 const headers = await this.createHeaders();
                 const response = await fetch(endpoints.createUser, {
-                    method: 'post',
+                    method: "post",
                     headers: {
                         "client-token": headers["client-token"],
                         "time-stamp": headers["time-stamp"],
@@ -246,22 +270,25 @@ export default {
                         email: this.email,
                         password: this.password,
                     }),
-                }).then(res => res.json());
+                }).then((res) => res.json());
 
-                console.log(response);
                 if (response.resCode === 201) {
-                    this.$router.push('/login');
-                };
+                    localStorage.setItem("token", response.token);
+                    this.$store.dispatch("auth/checkLocalToken", {
+                        token: response.token,
+                    });
+                    this.$router.push("/dashboard");
+                }
             } else {
                 this.validateInputs();
             }
         },
         async validatePhone() {
             this.validPhone = false;
-            const endpoints = this.$store.getters['auth/endpoints'];
+            const endpoints = this.$store.getters["auth/endpoints"];
             const headers = await this.createHeaders();
             const response = await fetch(endpoints.checkExistPhone, {
-                method: 'post',
+                method: "post",
                 headers: {
                     "client-token": headers["client-token"],
                     "time-stamp": headers["time-stamp"],
@@ -271,19 +298,19 @@ export default {
                 body: JSON.stringify({
                     phone: this.phone,
                 }),
-            }).then(res => res.json());
+            }).then((res) => res.json());
             if (response.resCode === 200) {
                 this.validPhone = true;
                 return true;
-            };
+            }
             return false;
         },
         async validateEmail() {
             this.validEmail = false;
-            const endpoints = this.$store.getters['auth/endpoints'];
+            const endpoints = this.$store.getters["auth/endpoints"];
             const headers = await this.createHeaders();
             const response = await fetch(endpoints.checkExistEmail, {
-                method: 'post',
+                method: "post",
                 headers: {
                     "client-token": headers["client-token"],
                     "time-stamp": headers["time-stamp"],
@@ -293,22 +320,22 @@ export default {
                 body: JSON.stringify({
                     email: this.email,
                 }),
-            }).then(res => res.json());
+            }).then((res) => res.json());
             if (response.resCode === 200) {
                 this.validEmail = true;
                 return true;
-            };
+            }
             return false;
         },
         async createHeaders() {
-            const endpoints = this.$store.getters['auth/endpoints'];
+            const endpoints = this.$store.getters["auth/endpoints"];
             const headers = await fetch(endpoints.header, {
                 method: "post",
             }).then((res) => res.json());
 
             return headers;
-        }
-    }
+        },
+    },
 };
 </script>
 <style scoped>

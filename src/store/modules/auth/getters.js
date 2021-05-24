@@ -10,5 +10,8 @@ export default {
     },
     endpoints(state) {
         return state.endpoints;
+    },
+    user(state) {
+        return state.user;
     }
 }
