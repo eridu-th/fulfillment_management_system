@@ -278,6 +278,10 @@ export default {
     margin: 0 auto;
 }
 
+#submit_email {
+    width: 100%;
+}
+
 @media (min-width: 768px) {
     #reset_password_form {
         max-width: 500px;

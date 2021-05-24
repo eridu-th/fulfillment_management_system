@@ -16,8 +16,6 @@ export default {
             },
         }).then(res => res.json());
 
-        console.log(response);
-
         if (response.resCode === 200) {
             context.commit('login', {
                 token: payload.token,
