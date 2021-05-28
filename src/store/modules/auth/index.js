@@ -2,8 +2,7 @@ import getters from './getters.js';
 import actions from './actions.js';
 import mutations from './mutations.js';
 
-// const host = 'http://localhost:3000';
-const host = "https://eridu-app.herokuapp.com";
+import host from '../../host.js';
 
 export default {
     namespaced: true,

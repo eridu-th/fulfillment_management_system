@@ -10,6 +10,7 @@ import Profile from "../views/Pages/UserProfile.vue";
 import Tables from "../views/Pages/Tables.vue";
 import Tracking from "../views/Pages/Tracking.vue";
 import Records from "../views/Pages/Records.vue";
+import Products from "../views/Pages/Products.vue";
 
 import Login from "../views/Auth/Login.vue";
 import Register from "../views/Auth/Register.vue";
@@ -57,6 +58,11 @@ const routes = [
         path: "/records",
         name: "records",
         components: { default: Records },
+      },
+      {
+        path: "/products",
+        name: "products",
+        components: { default: Products },
       },
     ],
   },
@@ -106,6 +112,7 @@ router.beforeEach(async function (to, from, next) {
         next({ name: 'login' });
       } else {
         await store.dispatch("auth/fetchUserData", { token });
+        await store.dispatch("carry/login", { token });
         next();
       }
     } else {

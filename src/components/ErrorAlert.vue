@@ -3,6 +3,7 @@
         <dialog open>
             <h2>{{ title }}</h2>
             <p>{{ content }}</p>
+            <slot></slot>
             <button
                 type="button"
                 class="btn btn-primary"
@@ -62,5 +63,12 @@ dialog {
 dialog button {
     display: block;
     margin: 0 auto;
+}
+
+dialog img {
+    display: block;
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
 }
 </style>

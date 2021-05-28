@@ -15,9 +15,9 @@
                 />
                 <sidebar-item
                     :link="{
-                        name: 'Tracking',
-                        icon: 'ni ni-pin-3 text-orange',
-                        path: '/tracking',
+                        name: 'Products',
+                        icon: 'ni ni-box-2 text-green',
+                        path: '/products',
                     }"
                 />
                 <sidebar-item
@@ -25,6 +25,13 @@
                         name: 'Records',
                         icon: 'ni ni-bullet-list-67 text-blue',
                         path: '/records',
+                    }"
+                />
+                <sidebar-item
+                    :link="{
+                        name: 'Tracking',
+                        icon: 'ni ni-pin-3 text-orange',
+                        path: '/tracking',
                     }"
                 />
                 <sidebar-item

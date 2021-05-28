@@ -5,20 +5,17 @@
     <div class="container-fluid mt--9">
         <div class="row mt-5">
             <div class="col">
-                <records-table
-                    type="light"
-                    title="Stock Records"
-                ></records-table>
+                <products-table type="light" title="Products"></products-table>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import RecordsTable from "../Tables/RecordsTable.vue";
+import ProductsTable from "../Tables/ProductsTable.vue";
 export default {
     components: {
-        RecordsTable,
+        ProductsTable,
     },
 };
 </script>
