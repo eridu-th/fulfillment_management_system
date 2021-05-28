@@ -108,11 +108,13 @@
                                     <td>{{ record.product_name }}</td>
                                     <td>
                                         {{
-                                            records.transit === "in" ? "+" : "-"
+                                            record.transit === "in" ? "+" : "-"
                                         }}
                                         {{ record.num_products }}
                                     </td>
-                                    <td>{{ record.date_in }}</td>
+                                    <td>
+                                        {{ record.date_in.slice(0, 11) }}
+                                    </td>
                                     <td>
                                         {{ record.note ? record.note : "" }}
                                     </td>
@@ -484,7 +486,7 @@ export default {
                 start: "2021-05-01",
                 end: `${new Date().getFullYear()}-${
                     new Date().getMonth() + 1
-                }-${new Date().getDate()}`,
+                }-${new Date().getDate() + 1}`,
             });
 
             console.log(stockIn);
@@ -493,7 +495,7 @@ export default {
                 const stockInFiltered = stockIn.data.reduce((list, item) => {
                     for (let product of products) {
                         if (product.sku === item[2]) {
-                            item.transit = "out";
+                            item.transit = "in";
                             list.push(item);
                         }
                     }
@@ -511,7 +513,7 @@ export default {
                 start: "2021-05-01",
                 end: `${new Date().getFullYear()}-${
                     new Date().getMonth() + 1
-                }-${new Date().getDate()}`,
+                }-${new Date().getDate() + 1}`,
             });
 
             if (stockOut.resCode === 200) {
