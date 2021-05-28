@@ -249,12 +249,12 @@ export default {
             selectedTab: this.$route.hash,
             selectedProduct: "", // S1962020501
             selectedProductRecords: {
-                stockIn: null,
-                stockOut: null,
+                stockIn: [],
+                stockOut: [],
             },
             records: {
-                stockIn: null,
-                stockOut: null,
+                stockIn: [],
+                stockOut: [],
             },
             activeTab: {
                 details: "",
@@ -413,15 +413,15 @@ export default {
             this.searchInput = "";
             this.searchedProducts = [];
             this.selectedTab = "";
-            this.records.stockIn = null;
-            this.records.stockOut = null;
+            this.records.stockIn = [];
+            this.records.stockOut = [];
             this.activeTab = {
                 details: "",
                 records: "",
             };
             this.selectedProduct = "";
-            this.selectedProductRecords.stockIn = null;
-            this.selectedProductRecords.stockOut = null;
+            this.selectedProductRecords.stockIn = [];
+            this.selectedProductRecords.stockOut = [];
             this.products = [];
             this.columns = [
                 "Image",
@@ -481,44 +481,54 @@ export default {
             const stockIn = await this.$store.dispatch("carry/getProducts", {
                 type: "product_stock",
                 status: "in",
-                start: "2020-10-01",
-                end: "2020-11-01",
+                start: "2021-05-01",
+                end: `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                }-${new Date().getDate()}`,
             });
 
-            const stockInFiltered = stockIn.data.reduce((list, item) => {
-                for (let product of products) {
-                    if (product.sku === item[2]) {
-                        item.transit = "out";
-                        list.push(item);
-                    }
-                }
-                return list;
-            }, []);
+            console.log(stockIn);
 
-            this.records.stockIn = stockInFiltered.length
-                ? stockInFiltered
-                : [];
+            if (stockIn.resCode === 200) {
+                const stockInFiltered = stockIn.data.reduce((list, item) => {
+                    for (let product of products) {
+                        if (product.sku === item[2]) {
+                            item.transit = "out";
+                            list.push(item);
+                        }
+                    }
+                    return list;
+                }, []);
+
+                this.records.stockIn = stockInFiltered.length
+                    ? stockInFiltered
+                    : [];
+            }
 
             const stockOut = await this.$store.dispatch("carry/getProducts", {
                 type: "product_stock",
                 status: "out",
-                start: "2020-10-01",
-                end: "2020-11-01",
+                start: "2021-05-01",
+                end: `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                }-${new Date().getDate()}`,
             });
 
-            const stockOutFiltered = stockOut.data.reduce((list, item) => {
-                for (let product of products) {
-                    if (product.sku === item[2]) {
-                        item.transit = "out";
-                        list.push(item);
+            if (stockOut.resCode === 200) {
+                const stockOutFiltered = stockOut.data.reduce((list, item) => {
+                    for (let product of products) {
+                        if (product.sku === item[2]) {
+                            item.transit = "out";
+                            list.push(item);
+                        }
                     }
-                }
-                return list;
-            }, []);
+                    return list;
+                }, []);
 
-            this.records.stockOut = stockOutFiltered.length
-                ? stockOutFiltered
-                : [];
+                this.records.stockOut = stockOutFiltered.length
+                    ? stockOutFiltered
+                    : [];
+            }
 
             console.log(this.records);
         } else {

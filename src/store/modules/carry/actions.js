@@ -65,8 +65,8 @@ export default {
             }).then(res => res.json());
 
             const token = context.rootState.auth.token;
-            // const carryToken = context.state.token;
-            const carryToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IlRlc3QgMSIsInVzZXJfbG9naW4iOiJzaDEiLCJjcmVhdGVfZGF0ZSI6IjIwMjEtMDUtMTcgMTQ6MTk6MjUifQ.gaO6zWR-KUtiQI112fL4pixNIhb5yaM2PsnJRrQ-OTE`;
+            const carryToken = context.state.token;
+            // const carryToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IlRlc3QgMSIsInVzZXJfbG9naW4iOiJzaDEiLCJjcmVhdGVfZGF0ZSI6IjIwMjEtMDUtMTcgMTQ6MTk6MjUifQ.gaO6zWR-KUtiQI112fL4pixNIhb5yaM2PsnJRrQ-OTE`;
 
             const response = await fetch(context.state.endpoints.orders, {
                 method: 'post',
@@ -105,13 +105,13 @@ export default {
             }).then(res => res.json());
 
             const token = context.rootState.auth.token;
-            // const carryToken = context.state.token;
+            const carryToken = context.state.token;
 
             // token for all products
-            const carryToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IlRlc3QgMSIsInVzZXJfbG9naW4iOiJzaDEiLCJjcmVhdGVfZGF0ZSI6IjIwMTktMTEtMTMgMTc6NTA6MzUifQ.5TTtPLS3h-4Gi0uH2sefEek6yIL8_uYgiqLH6w916dI`;
+            // const carryToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IlRlc3QgMSIsInVzZXJfbG9naW4iOiJzaDEiLCJjcmVhdGVfZGF0ZSI6IjIwMTktMTEtMTMgMTc6NTA6MzUifQ.5TTtPLS3h-4Gi0uH2sefEek6yIL8_uYgiqLH6w916dI`;
 
             // token for stock records
-            const carryStockToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QgMiIsInVzZXJfbG9naW4iOiJzaDIiLCJjcmVhdGVfZGF0ZSI6IjIwMTktMTEtMjEgMTc6NTU6NTAifQ.bYDd-3uQ44m2_JqNE-leGcBlgjKH-LaGx4y2d2ZF_xI`;
+            // const carryStockToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3QgMiIsInVzZXJfbG9naW4iOiJzaDIiLCJjcmVhdGVfZGF0ZSI6IjIwMTktMTEtMjEgMTc6NTU6NTAifQ.bYDd-3uQ44m2_JqNE-leGcBlgjKH-LaGx4y2d2ZF_xI`;
 
             const response = await fetch(context.state.endpoints.products, {
                 method: 'post',
@@ -124,7 +124,8 @@ export default {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    token: payload.type === 'products' ? carryToken : carryStockToken,
+                    // token: payload.type === 'products' ? carryToken : carryStockToken,
+                    token: carryToken,
                     data: {
                         type: payload.type,
                         status: payload.status,
