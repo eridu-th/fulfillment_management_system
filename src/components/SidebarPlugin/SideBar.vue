@@ -37,18 +37,16 @@
                     </base-dropdown> -->
                     <base-dropdown class="nav-item" position="right">
                         <template v-slot:title>
-                            <a class="nav-link" href="#" role="button">
-                                <div class="media align-items-center">
-                                    <span
-                                        class="avatar avatar-sm rounded-circle"
-                                    >
-                                        <img
-                                            alt="Image placeholder"
-                                            src="img/theme/team-1-800x800.jpg"
-                                        />
-                                    </span>
-                                </div>
-                            </a>
+                            <!-- <a class="nav-link" href="" role="button"> -->
+                            <div class="media align-items-center">
+                                <span class="avatar avatar-sm rounded-circle">
+                                    <img
+                                        alt="Image placeholder"
+                                        src="img/theme/team-1-800x800.jpg"
+                                    />
+                                </span>
+                            </div>
+                            <!-- </a> -->
                         </template>
 
                         <div class="dropdown-header noti-title">

@@ -111,10 +111,9 @@ router.beforeEach(async function (to, from, next) {
       if (!store.getters["auth/token"]) {
         next({ name: 'login' });
       } else {
-        store.dispatch('reset');
+
         await store.dispatch("auth/fetchUserData", { token });
         await store.dispatch("carry/login", { token });
-        store.dispatch('isLoaded');
         next();
       }
     } else {
