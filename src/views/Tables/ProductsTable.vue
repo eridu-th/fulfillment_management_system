@@ -8,8 +8,15 @@
         </error-alert>
     </teleport>
     <teleport to="body">
-        <div v-if="selectedProduct" class="details" @click.stop="closeAlert">
-            <dialog open @click.stop class="fadeIn">
+        <transition name="backdrop">
+            <div
+                v-if="selectedProduct"
+                class="details"
+                @click="closeAlert"
+            ></div>
+        </transition>
+        <transition name="product">
+            <dialog v-if="selectedProduct" open @click.stop>
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a
@@ -124,7 +131,7 @@
                     </div>
                 </div>
             </dialog>
-        </div>
+        </transition>
     </teleport>
     <div class="card shadow" :class="type === 'dark' ? 'bg-default' : ''">
         <div
@@ -168,7 +175,16 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table align-items-center table-flush tablesorter">
+            <div v-if="!isDataLoaded" class="loader">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p>Loading...</p>
+            </div>
+            <table
+                v-else
+                class="table align-items-center table-flush tablesorter"
+            >
                 <thead class="thead-light">
                     <tr>
                         <th v-for="column in columns" :key="column">
@@ -245,6 +261,7 @@ export default {
     },
     data() {
         return {
+            isDataLoaded: false,
             searchInput: "",
             searchedProducts: [],
             searchedPage: 1,
@@ -412,6 +429,7 @@ export default {
             }
         },
         resetState() {
+            this.isDataLoaded = false;
             this.searchInput = "";
             this.searchedProducts = [];
             this.selectedTab = "";
@@ -479,6 +497,7 @@ export default {
             });
 
             this.products = products;
+            this.isDataLoaded = true;
 
             const stockIn = await this.$store.dispatch("carry/getProducts", {
                 type: "product_stock",
@@ -488,8 +507,6 @@ export default {
                     new Date().getMonth() + 1
                 }-${new Date().getDate() + 1}`,
             });
-
-            console.log(stockIn);
 
             if (stockIn.resCode === 200) {
                 const stockInFiltered = stockIn.data.reduce((list, item) => {
@@ -531,8 +548,6 @@ export default {
                     ? stockOutFiltered
                     : [];
             }
-
-            console.log(this.records);
         } else {
             this.errorMessage =
                 response.message || `Error Code: ${response.resCode}`;
@@ -541,7 +556,7 @@ export default {
     },
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 tbody img {
     display: block;
     width: 50px;
@@ -581,7 +596,7 @@ tbody img {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.details dialog {
+.details ~ dialog {
     margin: 0;
     position: fixed;
     top: 50%;
@@ -595,6 +610,7 @@ tbody img {
     border-radius: 5px;
     border: none;
     padding: 1rem;
+    z-index: 1001;
 }
 
 .fadeIn {
@@ -602,13 +618,12 @@ tbody img {
     animation-fill-mode: both;
 }
 
-.details dialog > button {
-    display: block;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    border: none;
-    background-color: inherit;
+.product-enter-active {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.product-leave-active {
+    animation: fadeIn 0.3s ease-in reverse;
 }
 
 @keyframes fadeIn {
@@ -619,6 +634,30 @@ tbody img {
     100% {
         opacity: 1;
     }
+}
+
+.backdrop-enter-active,
+.backdrop-leave-active {
+    animation: backdrop 0.3s;
+}
+
+@keyframes backdrop {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.details ~ dialog > button {
+    display: block;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border: none;
+    background-color: inherit;
 }
 
 #product_contents {
@@ -683,6 +722,22 @@ tbody img {
 
 .stock_out {
     background-color: pink;
+}
+
+.loader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    div {
+        height: 3rem;
+        width: 3rem;
+    }
+
+    p {
+        font-size: 2rem;
+    }
 }
 
 .row {
