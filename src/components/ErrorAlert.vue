@@ -1,18 +1,13 @@
 <template>
-    <div @click="$emit('close')">
-        <dialog open>
-            <h2>{{ title }}</h2>
-            <p>{{ content }}</p>
-            <slot></slot>
-            <button
-                type="button"
-                class="btn btn-primary"
-                @click="$emit('close')"
-            >
-                {{ button }}
-            </button>
-        </dialog>
-    </div>
+    <div @click="$emit('close')"></div>
+    <dialog open>
+        <h2>{{ title }}</h2>
+        <p>{{ content }}</p>
+        <slot></slot>
+        <button type="button" class="btn btn-primary" @click="$emit('close')">
+            {{ button }}
+        </button>
+    </dialog>
 </template>
 
 <script>
@@ -58,6 +53,7 @@ dialog {
     border-radius: 5px;
     border: none;
     padding: 1rem;
+    z-index: 1001;
 }
 
 dialog button {

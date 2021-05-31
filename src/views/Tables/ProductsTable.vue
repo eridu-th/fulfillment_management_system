@@ -120,7 +120,11 @@
                                         {{ record.num_products }}
                                     </td>
                                     <td>
-                                        {{ record.date_in.slice(0, 11) }}
+                                        {{
+                                            record.transit === "in"
+                                                ? record.date_in.slice(0, 11)
+                                                : record.date_out.slice(0, 11)
+                                        }}
                                     </td>
                                     <td>
                                         {{ record.note ? record.note : "" }}
@@ -342,7 +346,10 @@ export default {
                 if (this.selectedProduct) {
                     const records = [...value.stockIn, ...value.stockOut];
                     records.sort((a, b) => {
-                        return Date.parse(b.date_in) - Date.parse(a.date_in);
+                        return (
+                            Date.parse(b.date_in ? b.date_in : b.date_out) -
+                            Date.parse(a.date_in ? a.date_in : a.date_out)
+                        );
                     });
                     this.recordsToRender = records;
                 }
@@ -382,7 +389,6 @@ export default {
     methods: {
         closeAlert() {
             this.isError = false;
-            this.selectedProduct = null;
 
             // inner router to check product info
             this.$router.push({ hash: "" });
@@ -499,19 +505,25 @@ export default {
             this.products = products;
             this.isDataLoaded = true;
 
+            const tmr = new Date(
+                new Date().getFullYear(),
+                new Date().getMonth(),
+                new Date().getDate() + 1
+            );
+
             const stockIn = await this.$store.dispatch("carry/getProducts", {
                 type: "product_stock",
                 status: "in",
                 start: "2021-05-01",
-                end: `${new Date().getFullYear()}-${
-                    new Date().getMonth() + 1
-                }-${new Date().getDate() + 1}`,
+                end: `${tmr.getFullYear()}-${
+                    tmr.getMonth() + 1
+                }-${tmr.getDate()}`,
             });
 
             if (stockIn.resCode === 200) {
                 const stockInFiltered = stockIn.data.reduce((list, item) => {
                     for (let product of products) {
-                        if (product.sku === item[2]) {
+                        if (product.sku === item["barcode_number"]) {
                             item.transit = "in";
                             list.push(item);
                         }
@@ -528,15 +540,15 @@ export default {
                 type: "product_stock",
                 status: "out",
                 start: "2021-05-01",
-                end: `${new Date().getFullYear()}-${
-                    new Date().getMonth() + 1
-                }-${new Date().getDate() + 1}`,
+                end: `${tmr.getFullYear()}-${
+                    tmr.getMonth() + 1
+                }-${tmr.getDate()}`,
             });
 
             if (stockOut.resCode === 200) {
                 const stockOutFiltered = stockOut.data.reduce((list, item) => {
                     for (let product of products) {
-                        if (product.sku === item[2]) {
+                        if (product.sku === item["barcode_number"]) {
                             item.transit = "out";
                             list.push(item);
                         }
