@@ -8,7 +8,8 @@ import Icons from "../views/Pages/Icons.vue";
 import Maps from "../views/Pages/Maps.vue";
 import Profile from "../views/Pages/UserProfile.vue";
 import Tables from "../views/Pages/Tables.vue";
-import Tracking from "../views/Pages/Tracking.vue";
+import Orders from "../views/Pages/Orders.vue";
+import OrderDetail from "../views/Pages/Orders/OrderDetail.vue";
 import Records from "../views/Pages/Records.vue";
 import Products from "../views/Pages/Products.vue";
 
@@ -50,9 +51,14 @@ const routes = [
         components: { default: Tables },
       },
       {
-        path: "/tracking",
-        name: "tracking",
-        components: { default: Tracking },
+        path: "/orders",
+        name: "orders",
+        components: { default: Orders },
+        children: [{
+          path: ':orderId',
+          components: { default: OrderDetail },
+          props: { default: true, },
+        }],
       },
       {
         path: "/records",

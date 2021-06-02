@@ -29,9 +29,9 @@
                 />
                 <sidebar-item
                     :link="{
-                        name: 'Tracking',
+                        name: 'Orders',
                         icon: 'ni ni-pin-3 text-orange',
-                        path: '/tracking',
+                        path: '/orders',
                     }"
                 />
                 <sidebar-item

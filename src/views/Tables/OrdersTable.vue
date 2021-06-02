@@ -3,13 +3,16 @@
         <error-alert v-if="isError" @close="closeAlert" :content="errorMessage">
         </error-alert>
     </teleport>
+    <teleport to="body">
+        <router-view></router-view>
+    </teleport>
     <div class="card shadow" :class="type === 'dark' ? 'bg-default' : ''">
         <div
             class="card-header border-0"
             :class="type === 'dark' ? 'bg-transparent' : ''"
         >
             <div class="row align-items-center">
-                <div class="col-sm col-lg-3 col-xl-6">
+                <div class="col-sm-3 col-xl-6">
                     <h3
                         class="mb-0"
                         :class="type === 'dark' ? 'text-white' : ''"
@@ -17,14 +20,39 @@
                         {{ title }}
                     </h3>
                 </div>
-                <div class="col-sm col-lg-9 col-xl-6 text-right">
+                <div class="col-sm-9 col-xl-6 text-right">
                     <form
-                        class="d-flex flex-column flex-sm-row justify-content-sm-center justify-content-lg-end align-items-center"
+                        class="d-flex flex-column flex-sm-row justify-content-sm-end align-items-center"
+                        @submit.prevent="clearSearchInput"
+                    >
+                        <div class="clearInput">
+                            <label for="search_product">Search Product</label>
+                            <button
+                                class="btn btn-primary btn-sm my-2"
+                                type="submit"
+                            >
+                                Clear
+                            </button>
+                        </div>
+                        <input
+                            type="text"
+                            id="search_product"
+                            class="mx-2 form-control"
+                            v-model.trim="searchInput"
+                            @input="searchProduct"
+                        />
+                    </form>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-sm text-right">
+                    <form
+                        class="d-flex flex-column flex-lg-row justify-content-sm-center justify-content-lg-end align-items-center"
                         @submit.prevent
                     >
                         <date-picker
                             v-model="range"
-                            mode="date"
+                            mode="dateTime"
                             :masks="masks"
                             is-range
                             color="orange"
@@ -33,7 +61,7 @@
                                 v-slot="{ inputValue, inputEvents, isDragging }"
                             >
                                 <div
-                                    class="d-flex flex-column flex-md-row justify-content-lg-end align-items-center"
+                                    class="d-flex flex-column flex-sm-row flex-md-column flex-lg-row justify-content-lg-end align-items-center"
                                 >
                                     <div class="input_wrapper">
                                         <div class="relative flex-grow">
@@ -115,51 +143,54 @@
                     <p>Loading...</p>
                 </div>
                 <table
-                    v-else-if="renderRecords.length"
+                    v-else-if="renderOrders.length"
                     class="table align-items-center table-flush tablesorter"
                 >
                     <thead class="thead-light">
                         <tr>
-                            <th>Shop</th>
-                            <th>SKU</th>
-                            <th>Name</th>
-                            <th>Amount</th>
+                            <th>Order</th>
+                            <th>Order ID</th>
+                            <th>Receiver Name</th>
+                            <th>Shipping By</th>
                             <th>Date</th>
-                            <th>Note</th>
+                            <th>Purchase Order</th>
+                            <th>Packed</th>
                         </tr>
                     </thead>
-
                     <tbody class="list">
                         <tr
-                            v-for="record in renderRecords"
-                            :key="
-                                record.product_stock_in_id
-                                    ? record.product_stock_in_id
-                                    : record.product_stock_out_id
-                            "
-                            :class="
-                                record.transit === 'in'
-                                    ? 'stock_in'
-                                    : 'stock_out'
-                            "
+                            v-for="(order, index) in renderOrders"
+                            :key="order.order_number"
+                            class="order_detail"
+                            @click="checkDetails(order.order_id)"
                         >
-                            <td>{{ record.shop_number }}</td>
-                            <td>{{ record.barcode_number }}</td>
-                            <td>{{ record.product_name }}</td>
-                            <td>
-                                {{ record.transit === "in" ? "+" : "-" }}
-                                {{ record.num_products }}
-                            </td>
-                            <td>
-                                {{
-                                    record.transit === "in"
-                                        ? record.date_in
-                                        : record.date_out
-                                }}
-                            </td>
-                            <td>
-                                {{ record.note ? record.note : "" }}
-                            </td>
+                            <th>{{ (page - 1) * 10 + 1 + index }}</th>
+                            <th>{{ order.order_number }}</th>
+                            <th>{{ order.name_cust }}</th>
+                            <th>{{ order.type_send }} {{ order.tack_post }}</th>
+                            <th>{{ order.date_order }}</th>
+                            <th>
+                                <span
+                                    :class="
+                                        order.packing_status === 'Complete'
+                                            ? 'complete'
+                                            : ''
+                                    "
+                                >
+                                    {{ order.status }}
+                                </span>
+                            </th>
+                            <th>
+                                <span
+                                    :class="
+                                        order.packing_status === 'Complete'
+                                            ? 'complete'
+                                            : ''
+                                    "
+                                >
+                                    {{ order.packing_status }}</span
+                                >
+                            </th>
                         </tr>
                     </tbody>
                 </table>
@@ -174,7 +205,7 @@
         <base-pagination
             :total="totalPages"
             @input="pageNumber"
-            :value="renderPage"
+            :value="page"
         ></base-pagination>
     </div>
 </template>
@@ -184,7 +215,6 @@ import ErrorAlert from "../../components/ErrorAlert.vue";
 import { DatePicker } from "v-calendar";
 
 export default {
-    name: "records-table",
     components: {
         ErrorAlert,
         DatePicker,
@@ -197,130 +227,123 @@ export default {
     },
     data() {
         return {
-            isDataLoading: true, // default be false
-            startDate: ``,
-            endDate: ``,
-            filteredPage: 1,
-            page: 1,
-            records: {
-                stockIn: [],
-                stockOut: [],
-            },
-            filteredRecords: [],
-            rows: 10,
+            orders: [],
+            filteredOrders: [], // empty as default
+            searchInput: "",
+            searchedPage: 1,
             range: {
                 start: new Date(),
                 end: new Date(),
             },
             masks: {
-                // input: "YYYY-MM-DD h:mm A",
-                input: "YYYY-MM-DD",
+                input: "YYYY-MM-DD h:mm A",
             },
-            isError: false,
+            isDataLoading: false, // false as default
+            page: 1,
+            rows: 10,
+            isError: false, // false as default
             errorMessage: "",
         };
     },
     watch: {
-        range() {
-            this.startDate = this.getDateString(this.range.start);
-            this.endDate = this.getDateString(this.range.end);
-            this.fetchRecords();
+        searchInput(value) {
+            if (value.length) {
+                this.filteredOrders = this.orders.reduce((list, order) => {
+                    if (
+                        order.order_number
+                            .toLowerCase()
+                            .includes(value.toLowerCase())
+                    ) {
+                        list.push(order);
+                    } else if (
+                        order.name_cust
+                            .toLowerCase()
+                            .includes(value.toLowerCase())
+                    ) {
+                        list.push(order);
+                    } else if (
+                        order.type_send
+                            .toLowerCase()
+                            .includes(value.toLowerCase())
+                    ) {
+                        list.push(order);
+                    } else if (
+                        order.tack_post
+                            .toLowerCase()
+                            .includes(value.toLowerCase())
+                    ) {
+                        list.push(order);
+                    } else if (
+                        order.status.toLowerCase().includes(value.toLowerCase())
+                    ) {
+                        list.push(order);
+                    }
+                    return list;
+                }, []);
+            }
         },
     },
     computed: {
-        renderRecords() {
-            const trimStart = (this.page - 1) * this.rows;
-            const trimEnd = trimStart + this.rows;
-
-            const trimmedData = this.filteredRecords.slice(trimStart, trimEnd);
-            return trimmedData;
+        sortOrdersByDate() {
+            const filteredOrders = this.orders.reduce((list, order) => {
+                if (
+                    Date.parse(order.date_order) <=
+                        Date.parse(this.range.end) &&
+                    Date.parse(order.date_order) >= Date.parse(this.range.start)
+                ) {
+                    list.push(order);
+                }
+                return list;
+            }, []);
+            return filteredOrders;
+        },
+        renderOrders() {
+            return this.sortOrdersByDate;
         },
         renderPage() {
+            if (this.searchInput.length) return this.searchedPage;
             return this.page;
         },
         totalPages() {
-            return this.records.stockIn.length + this.records.stockOut.length;
+            if (this.searchInput.length) return this.filteredOrders.length;
+            return this.orders.length;
         },
     },
     methods: {
         pageNumber(value) {
-            this.page = value;
+            if (this.searchInput.length) {
+                this.searchedPage = value;
+            } else {
+                this.page = value;
+            }
         },
-        closeAlert() {
-            this.isError = false;
+        checkDetails(order_id = "") {
+            const order = this.orders.find(
+                (item) => item.order_id === order_id
+            );
+            this.filteredOrders = order;
+            this.$router.push({ path: `/orders/${order_id}` });
+        },
+        clearSearchInput() {
+            this.searchInput = "";
         },
         getDateString(date) {
             return `${date.getFullYear()}-${
                 date.getMonth() + 1
             }-${date.getDate()}`;
         },
-        sortRecords() {
-            this.filteredRecords = [
-                ...this.records.stockIn,
-                ...this.records.stockOut,
-            ].sort(function (a, b) {
-                return (
-                    Date.parse(b.date_in ? b.date_in : b.date_out) -
-                    Date.parse(a.date_in ? a.date_in : a.date_out)
-                );
-            });
-        },
-        async fetchRecords() {
-            this.isDataLoading = true;
-            const stockIn = await this.$store.dispatch("carry/getProducts", {
-                type: "product_stock",
-                status: "in",
-                start: this.startDate,
-                end: this.endDate,
-            });
-
-            if (stockIn.resCode === 200) {
-                const stockInFiltered = stockIn.data.reduce((list, item) => {
-                    item.transit = "in";
-                    list.push(item);
-                    return list;
-                }, []);
-
-                this.records.stockIn = stockInFiltered;
-            } else {
-                this.records.stockIn = [];
-            }
-
-            const stockOut = await this.$store.dispatch("carry/getProducts", {
-                type: "product_stock",
-                status: "out",
-                start: this.startDate,
-                end: this.endDate,
-            });
-
-            if (stockOut.resCode === 200) {
-                const stockOutFiltered = stockOut.data.reduce((list, item) => {
-                    item.transit = "out";
-                    list.push(item);
-                    return list;
-                }, []);
-
-                this.records.stockOut = stockOutFiltered;
-            } else {
-                this.records.stockOut = [];
-            }
-
-            this.isDataLoading = false;
-
-            this.sortRecords();
+        closeAlert() {
+            this.isError = false;
         },
         reset() {
-            this.isDataLoading = true;
-            this.startDate = ``;
-            this.endDate = ``;
-            this.filteredPage = 1;
-            this.page = 1;
-            this.records = {
-                stockIn: [],
-                stockOut: [],
+            this.orders = [];
+            this.filteredOrders = []; // empty as default
+            this.searchInput = "";
+            this.searchedPage = 1;
+            this.date = {
+                start: "",
+                end: "",
             };
-            this.filteredRecords = [];
-            this.rows = 10;
             this.range = {
                 start: new Date(),
                 end: new Date(),
@@ -328,54 +351,65 @@ export default {
             this.masks = {
                 input: "YYYY-MM-DD h:mm A",
             };
-            this.isError = false;
+            this.isDataLoading = false; // false as default
+            this.page = 1;
+            this.rows = 10;
+            this.isError = false; // false as default
             this.errorMessage = "";
         },
     },
     beforeMount() {
         const dateToday = new Date().getDate();
-        const monthToday = new Date().getMonth() + 1;
+        const monthToday = new Date().getMonth();
         const yearToday = new Date().getFullYear();
 
-        const startDate = new Date(yearToday, monthToday - 2, 1);
+        const startDate = new Date(yearToday, monthToday - 1, 1);
 
         this.range.start = startDate;
-        this.range.end = new Date(yearToday, monthToday - 1, dateToday);
-
-        this.startDate = this.getDateString(this.range.start);
-        this.endDate = this.getDateString(this.range.end);
+        this.range.end = new Date(yearToday, monthToday, dateToday);
     },
     async mounted() {
-        this.fetchRecords();
-    },
-    unmounted() {
-        this.reset();
+        this.isDataLoading = true;
+
+        const response = await this.$store.dispatch("carry/getOrders", {
+            type: "get_order_list",
+        });
+
+        if (response.resCode === 200) {
+            const { data } = response;
+            let list = [];
+            if (data.total_page > 1) {
+                list = [...data.data];
+                for (let page = 1; page < data.total_page; page++) {
+                    const res = await this.$store.dispatch("carry/getOrders", {
+                        type: "get_order_list",
+                        page: page + 1,
+                    });
+                    if (res.resCode === 200) {
+                        list = [...list, ...res.data.data];
+                    }
+                }
+            } else {
+                list = data.data;
+            }
+            list.sort(function (a, b) {
+                return Date.parse(b.date_order) - Date.parse(a.date_order);
+            });
+            this.orders = list;
+        }
+
+        this.isDataLoading = false;
     },
 };
 </script>
 
 <style scoped lang="scss">
-.loader {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    div {
-        width: 3rem;
-        height: 3rem;
-    }
-
-    p {
-        font-size: 2rem;
-    }
-}
-
 form {
     label {
         display: inline-block;
         text-align: center;
         padding: 0 0.5rem;
+        margin: 0;
     }
 
     @media (min-width: 990px) {
@@ -383,32 +417,44 @@ form {
             white-space: nowrap;
         }
     }
-    svg {
-        width: 1rem;
-    }
-    input {
-        padding: 0;
-        max-width: 100px;
+
+    .clearInput {
+        display: flex;
+        align-items: center;
     }
 
     .input_wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
-        min-width: 200px;
+
+        svg {
+            width: 1rem;
+            margin: 0 auto;
+        }
 
         label {
             margin: 0;
         }
+
+        input {
+            max-width: 195px;
+        }
+
+        & > div:last-child {
+            min-width: 230px;
+        }
     }
 }
 
-.stock_in {
-    background-color: palegreen;
+.order_detail {
+    cursor: pointer;
+    transition: all 0.2s ease-in;
 }
 
-.stock_out {
-    background-color: pink;
+.order_detail:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .placeholder {
@@ -429,5 +475,27 @@ form {
     100% {
         opacity: 100;
     }
+}
+
+.loader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    div {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    p {
+        font-size: 2rem;
+    }
+}
+
+.complete {
+    background-color: green;
+    color: #fff;
+    border-radius: 5px;
 }
 </style>

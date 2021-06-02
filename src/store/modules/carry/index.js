@@ -17,8 +17,9 @@ export default {
             user: null,
             token: null,
             products: [],
-            orders: [],
             stockRecords: [],
+            orders: [],
+            selectedOrder: null,
         }
     },
     getters,

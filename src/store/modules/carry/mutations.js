@@ -8,11 +8,14 @@ export default {
     products(state, payload) {
         state.products = payload.products;
     },
+    stockRecords(state, payload) {
+        state.stockRecords = payload.stockRecords;
+    },
     orders(state, payload) {
         state.orders = payload.orders;
     },
-    stockRecords(state, payload) {
-        state.stockRecords = payload.stockRecords;
+    selectedOrder(state, payload) {
+        state.selectedOrder = payload.selectedOrder;
     },
     error(state, payload) {
         state.error = payload.message || 'something went wrong during login';

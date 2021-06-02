@@ -8,10 +8,13 @@ export default {
     products(state) {
         return state.products;
     },
-    orders(state) {
-        return state.orders;
-    },
     stockRecords(state) {
         return state.stockRecords;
     },
+    orders(state) {
+        return state.orders;
+    },
+    selectedOrder(state) {
+        return state.selectedOrder;
+    }
 }

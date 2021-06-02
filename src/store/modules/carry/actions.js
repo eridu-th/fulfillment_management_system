@@ -58,46 +58,6 @@ export default {
             context.commit('error', err);
         }
     },
-    async getOrders(context, payload) {
-        try {
-            const headers = await fetch(context.rootState.auth.endpoints.header, {
-                method: 'post',
-            }).then(res => res.json());
-
-            const token = context.rootState.auth.token;
-            const carryToken = context.state.token;
-            // const carryToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IlRlc3QgMSIsInVzZXJfbG9naW4iOiJzaDEiLCJjcmVhdGVfZGF0ZSI6IjIwMjEtMDUtMTcgMTQ6MTk6MjUifQ.gaO6zWR-KUtiQI112fL4pixNIhb5yaM2PsnJRrQ-OTE`;
-
-            const response = await fetch(context.state.endpoints.orders, {
-                method: 'post',
-                mode: 'cors',
-                headers: {
-                    'Authorization': token,
-                    'client-token': headers['client-token'],
-                    'time-stamp': headers['time-stamp'],
-                    'time-signature': headers['time-signature'],
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    token: carryToken,
-                    data: {
-                        type: payload.type,
-                        page: payload.page,
-                        id: payload.id,
-                        k_filter: payload.filter,
-                        k_start: payload.start,
-                        k_end: payload.end,
-                    },
-                }),
-            }).then(res => res.json());
-
-            context.commit('orders', { orders: response.data });
-
-            return response;
-        } catch (err) {
-            context.commit('error', err);
-        }
-    },
     async getProducts(context, payload) {
         try {
             const headers = await fetch(context.rootState.auth.endpoints.header, {
@@ -147,6 +107,53 @@ export default {
             }
 
             return response;
+        } catch (err) {
+            context.commit('error', err);
+        }
+    },
+    async getOrders(context, payload) {
+        try {
+            const headers = await fetch(context.rootState.auth.endpoints.header, {
+                method: 'post',
+            }).then(res => res.json());
+
+            const token = context.rootState.auth.token;
+            const carryToken = context.state.token;
+            // const carryToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IlRlc3QgMSIsInVzZXJfbG9naW4iOiJzaDEiLCJjcmVhdGVfZGF0ZSI6IjIwMjEtMDUtMTcgMTQ6MTk6MjUifQ.gaO6zWR-KUtiQI112fL4pixNIhb5yaM2PsnJRrQ-OTE`;
+
+            const response = await fetch(context.state.endpoints.orders, {
+                method: 'post',
+                mode: 'cors',
+                headers: {
+                    'Authorization': token,
+                    'client-token': headers['client-token'],
+                    'time-stamp': headers['time-stamp'],
+                    'time-signature': headers['time-signature'],
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    token: carryToken,
+                    data: {
+                        type: payload.type,
+                        page: payload.page,
+                        id: payload.id,
+                        k_filter: payload.filter,
+                        k_start: payload.start,
+                        k_end: payload.end,
+                    },
+                }),
+            }).then(res => res.json());
+
+            if (response.resCode === 200) {
+                if (payload.type === 'get_order_list') {
+                    context.commit('orders', { orders: response.data.data });
+                } else if (payload.type === 'get_order_detail') {
+                    context.commit('selectedOrder', { selectedOrder: response.data });
+                }
+                return response;
+            } else {
+                throw new Error(response);
+            }
         } catch (err) {
             context.commit('error', err);
         }
