@@ -22,13 +22,13 @@
                     Baht
                 </div>
             </li>
-            <li>
+            <!-- <li>
                 <h3>Costs:</h3>
-            </li>
-            <li>
+            </li> -->
+            <!-- <li>
                 <h3>Box Value:</h3>
                 <div>{{ product.material_cost }} Baht</div>
-            </li>
+            </li> -->
             <!-- <li>
                 <h3>Include:</h3>
                 <div>{{ product }} Baht</div>

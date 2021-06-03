@@ -56,7 +56,7 @@ export default {
                 delivery: "order-delivery",
                 costs: "order-costs",
             },
-            selectedTab: "order-costs",
+            selectedTab: "order-delivery",
         };
     },
     computed: {
