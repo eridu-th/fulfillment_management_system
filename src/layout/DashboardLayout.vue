@@ -36,6 +36,13 @@
                 />
                 <sidebar-item
                     :link="{
+                        name: 'Create Order',
+                        icon: 'fas fa-cart-plus text-green',
+                        path: '/orders/create',
+                    }"
+                />
+                <sidebar-item
+                    :link="{
                         name: 'User Profile',
                         icon: 'ni ni-single-02 text-yellow',
                         path: '/profile',
