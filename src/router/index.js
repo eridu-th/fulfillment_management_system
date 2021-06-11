@@ -9,7 +9,8 @@ import Maps from "../views/Pages/Maps.vue";
 import Profile from "../views/Pages/UserProfile.vue";
 import Tables from "../views/Pages/Tables.vue";
 import Orders from "../views/Pages/Orders.vue";
-import CreateOrder from "../views/Pages/CreateOrder.vue";
+import CreatePage from "../views/Pages/CreatePage.vue";
+import CreateSingleOrder from "../views/Pages/CreateOrder/CreateSingleOrder.vue";
 import OrderDetail from "../views/Pages/Orders/OrderDetail.vue";
 import Records from "../views/Pages/Records.vue";
 import Products from "../views/Pages/Products.vue";
@@ -62,9 +63,14 @@ const routes = [
         }],
       },
       {
-        path: "/orders/create",
+        path: "/create",
+        name: "create",
+        components: { default: CreatePage },
+      },
+      {
+        path: "/create/order",
         name: "create_order",
-        components: { default: CreateOrder },
+        components: { default: CreateSingleOrder },
       },
       {
         path: "/records",

@@ -29,7 +29,7 @@ export default {
             context.commit('error', err);
         }
     },
-    async addShop(context, payload) {
+    async createOrder(context, payload) {
         try {
             const headers = await fetch(context.rootState.auth.endpoints.header, {
                 method: 'post',
@@ -38,7 +38,10 @@ export default {
             const token = context.rootState.auth.token;
             const carryToken = context.state.token;
 
-            const response = await fetch(context.state.endpoints.addShop, {
+            // token for testing
+            // const carryToken = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IlRlc3QgMSIsInVzZXJfbG9naW4iOiJzaDEiLCJjcmVhdGVfZGF0ZSI6IjIwMjEtMDUtMTcgMTY6MjU6NDEifQ.Yr_KXfjmCqbeE7k3W34_viUFzpfzSbywKe43ghefA5k`;
+
+            const response = await fetch(context.state.endpoints.orders, {
                 method: 'post',
                 mode: 'cors',
                 headers: {
@@ -50,7 +53,21 @@ export default {
                 },
                 body: JSON.stringify({
                     token: carryToken,
-                    data: payload, // follow carry POST Add order shop BODY
+                    data: {
+                        type: payload.type,
+                        name_send: payload.name_send,
+                        tel_send: payload.tel_send,
+                        address_send: payload.address_send,
+                        post_send: payload.post_send,
+                        name_cust: payload.name_cust,
+                        tel: payload.tel,
+                        address: payload.address,
+                        Post: payload.Post,
+                        Balance: payload.Balance,
+                        type_send: payload.type_send,
+                        node: payload.node,
+                        // node: [{ "barcode_number": "S13720191", "amount": "2" }], // for testing purpose
+                    },
                 }),
             }).then(res => res.json());
             return response;

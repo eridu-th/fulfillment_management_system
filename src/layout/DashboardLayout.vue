@@ -38,7 +38,7 @@
                     :link="{
                         name: 'Create Order',
                         icon: 'fas fa-cart-plus text-green',
-                        path: '/orders/create',
+                        path: '/create',
                     }"
                 />
                 <sidebar-item
