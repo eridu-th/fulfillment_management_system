@@ -11,6 +11,7 @@ import Tables from "../views/Pages/Tables.vue";
 import Orders from "../views/Pages/Orders.vue";
 import CreatePage from "../views/Pages/CreatePage.vue";
 import CreateSingleOrder from "../views/Pages/CreateOrder/CreateSingleOrder.vue";
+import CreateMultipleOrders from "../views/Pages/CreateOrder/CreateMultipleOrders.vue";
 import OrderDetail from "../views/Pages/Orders/OrderDetail.vue";
 import Records from "../views/Pages/Records.vue";
 import Products from "../views/Pages/Products.vue";
@@ -71,6 +72,11 @@ const routes = [
         path: "/create/order",
         name: "create_order",
         components: { default: CreateSingleOrder },
+      },
+      {
+        path: "/create/orders",
+        name: "create_orders",
+        components: { default: CreateMultipleOrders },
       },
       {
         path: "/records",

@@ -19,7 +19,8 @@
     "vue": "3.0.5",
     "vue-router": "4.0.1",
     "vue-toastification": "1.7.11",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.5.10",
