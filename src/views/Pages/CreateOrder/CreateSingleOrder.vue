@@ -693,6 +693,7 @@ export default {
     },
     async beforeMount() {
         await this.getProducts();
+        console.log(this.$store.getters["carry/user"]);
     },
     beforeRouteLeave(to, from, next) {
         if (this.checkInputs()) {
