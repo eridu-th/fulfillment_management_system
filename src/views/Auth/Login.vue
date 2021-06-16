@@ -45,7 +45,7 @@
             <button type="submit" class="btn btn-primary">Login</button>
             <div>
                 <div>
-                    <router-link to="register">Sing Up</router-link>
+                    <router-link to="register">Sign Up</router-link>
                 </div>
                 <div>
                     <router-link to="/forgetpassword"
@@ -71,7 +71,7 @@ export default {
     watch: {
         auth(value) {
             if (value) {
-                this.$router.push("/dashboard");
+                this.$router.push("/orders");
             }
         },
     },

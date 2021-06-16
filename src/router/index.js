@@ -25,7 +25,7 @@ import store from '../store/index';
 const routes = [
   {
     path: "/",
-    redirect: "/dashboard",
+    redirect: "/orders",
     component: DashboardLayout,
     children: [
       {

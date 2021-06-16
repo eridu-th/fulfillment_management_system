@@ -6,13 +6,13 @@
             title="SoiBear"
         >
             <template v-slot:links>
-                <sidebar-item
+                <!-- <sidebar-item
                     :link="{
                         name: 'Dashboard',
                         icon: 'ni ni-tv-2 text-primary',
                         path: '/dashboard',
                     }"
-                />
+                /> -->
                 <sidebar-item
                     :link="{
                         name: 'Products',
