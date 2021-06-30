@@ -14,8 +14,8 @@
                     </div>
                     <div class="card">
                         <router-link
-                            class="btn disabled"
-                            :to="{ name: 'create_order' }"
+                            class="btn btn-outline-secondary"
+                            :to="{ name: 'create_orders' }"
                             >Create Multiple Orders</router-link
                         >
                     </div>

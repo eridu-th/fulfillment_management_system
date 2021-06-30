@@ -22,7 +22,12 @@
                 </div>
                 <div class="col-sm-9 col-xl-6 text-right">
                     <form
-                        class="d-flex flex-column flex-sm-row justify-content-sm-end align-items-center"
+                        class="
+                            d-flex
+                            flex-column flex-sm-row
+                            justify-content-sm-end
+                            align-items-center
+                        "
                         @submit.prevent="clearSearchInput"
                     >
                         <div class="clearInput">
@@ -47,7 +52,12 @@
             <div class="row align-items-center">
                 <div class="col-sm text-right">
                     <form
-                        class="d-flex flex-column flex-lg-row justify-content-sm-center justify-content-lg-end align-items-center"
+                        class="
+                            d-flex
+                            flex-column flex-lg-row
+                            justify-content-sm-center justify-content-lg-end
+                            align-items-center
+                        "
                         @submit.prevent
                     >
                         <date-picker
@@ -61,7 +71,15 @@
                                 v-slot="{ inputValue, inputEvents, isDragging }"
                             >
                                 <div
-                                    class="d-flex flex-column flex-sm-row flex-md-column flex-lg-row justify-content-lg-end align-items-center"
+                                    class="
+                                        d-flex
+                                        flex-column
+                                        flex-sm-row
+                                        flex-md-column
+                                        flex-lg-row
+                                        justify-content-lg-end
+                                        align-items-center
+                                    "
                                 >
                                     <div class="input_wrapper">
                                         <div class="relative flex-grow">
@@ -71,7 +89,14 @@
                                         </div>
                                         <div class="relative flex-grow">
                                             <svg
-                                                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"
+                                                class="
+                                                    text-gray-600
+                                                    w-4
+                                                    h-full
+                                                    mx-2
+                                                    absolute
+                                                    pointer-events-none
+                                                "
                                                 fill="none"
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
@@ -85,7 +110,14 @@
                                             </svg>
                                             <input
                                                 id="start_date"
-                                                class="flex-grow py-1 bg-gray-100 border rounded w-full"
+                                                class="
+                                                    flex-grow
+                                                    py-1
+                                                    bg-gray-100
+                                                    border
+                                                    rounded
+                                                    w-full
+                                                "
                                                 :class="
                                                     isDragging
                                                         ? 'text-gray-600'
@@ -102,7 +134,14 @@
                                         </div>
                                         <div class="relative flex-grow">
                                             <svg
-                                                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"
+                                                class="
+                                                    text-gray-600
+                                                    w-4
+                                                    h-full
+                                                    mx-2
+                                                    absolute
+                                                    pointer-events-none
+                                                "
                                                 fill="none"
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
@@ -116,7 +155,14 @@
                                             </svg>
                                             <input
                                                 id="end_date"
-                                                class="flex-grow py-1 bg-gray-100 border rounded w-full"
+                                                class="
+                                                    flex-grow
+                                                    py-1
+                                                    bg-gray-100
+                                                    border
+                                                    rounded
+                                                    w-full
+                                                "
                                                 :class="
                                                     isDragging
                                                         ? 'text-gray-600'
@@ -366,7 +412,7 @@ export default {
         const startDate = new Date(yearToday, monthToday - 1, 1);
 
         this.range.start = startDate;
-        this.range.end = new Date(yearToday, monthToday, dateToday);
+        this.range.end = new Date(yearToday, monthToday, dateToday + 1);
     },
     async mounted() {
         this.isDataLoading = true;
