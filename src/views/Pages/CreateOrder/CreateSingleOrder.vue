@@ -402,7 +402,7 @@ export default {
     },
     data() {
         return {
-            logistics: ["Kerry", "Kerry COD"],
+            logistics: ["Kerry", "Kerry COD", "Lazada", "Shopee"],
             sender: {
                 name: "",
                 phone: "",
