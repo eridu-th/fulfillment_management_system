@@ -22,14 +22,9 @@
                 <th class="text-center">{{ product.num_pro }}</th>
                 <th class="text-center">{{ product.confirm_num_pro }}</th>
                 <th>
-                    <span
-                        :class="
-                            product.status.toLowerCase() === 'complete'
-                                ? 'complete'
-                                : ''
-                        "
-                        >{{ product.status }}</span
-                    >
+                    <span :class="statusClass(product.status)">{{
+                        product.status
+                    }}</span>
                 </th>
             </tr>
         </tbody>
@@ -56,6 +51,15 @@ export default {
                 return list;
             }, []);
             return products;
+        },
+    },
+    methods: {
+        statusClass(status) {
+            let statusStyle = "";
+            if (status && status.toLowerCase() === "complete") {
+                statusStyle = "complete";
+            }
+            return statusStyle;
         },
     },
 };
