@@ -163,6 +163,14 @@ export default {
 
             if (response.resCode === 200) {
                 if (payload.type === 'get_order_list') {
+                    // start
+                    /*
+                        this is noticed to block on 2021/07/14
+                    */
+                    response.data.data = response.data.data.filter(item => {
+                        return item.order_number !== 'O824004';
+                    });
+                    // end
                     context.commit('orders', { orders: response.data.data });
                 } else if (payload.type === 'get_order_detail') {
                     context.commit('selectedOrder', { selectedOrder: response.data });
