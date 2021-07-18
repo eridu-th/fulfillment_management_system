@@ -22,7 +22,12 @@
                 </div>
                 <div class="col-sm-9 col-xl-6 text-right">
                     <form
-                        class="d-flex flex-column flex-sm-row justify-content-sm-end align-items-center"
+                        class="
+                            d-flex
+                            flex-column flex-sm-row
+                            justify-content-sm-end
+                            align-items-center
+                        "
                         @submit.prevent="clearSearchInput"
                     >
                         <div class="clearInput">
@@ -47,7 +52,12 @@
             <div class="row align-items-center">
                 <div class="col-sm text-right">
                     <form
-                        class="d-flex flex-column flex-lg-row justify-content-sm-center justify-content-lg-end align-items-center"
+                        class="
+                            d-flex
+                            flex-column flex-lg-row
+                            justify-content-sm-center justify-content-lg-end
+                            align-items-center
+                        "
                         @submit.prevent
                     >
                         <date-picker
@@ -61,7 +71,15 @@
                                 v-slot="{ inputValue, inputEvents, isDragging }"
                             >
                                 <div
-                                    class="d-flex flex-column flex-sm-row flex-md-column flex-lg-row justify-content-lg-end align-items-center"
+                                    class="
+                                        d-flex
+                                        flex-column
+                                        flex-sm-row
+                                        flex-md-column
+                                        flex-lg-row
+                                        justify-content-lg-end
+                                        align-items-center
+                                    "
                                 >
                                     <div class="input_wrapper">
                                         <div class="relative flex-grow">
@@ -71,7 +89,14 @@
                                         </div>
                                         <div class="relative flex-grow">
                                             <svg
-                                                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"
+                                                class="
+                                                    text-gray-600
+                                                    w-4
+                                                    h-full
+                                                    mx-2
+                                                    absolute
+                                                    pointer-events-none
+                                                "
                                                 fill="none"
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
@@ -85,7 +110,14 @@
                                             </svg>
                                             <input
                                                 id="start_date"
-                                                class="flex-grow py-1 bg-gray-100 border rounded w-full"
+                                                class="
+                                                    flex-grow
+                                                    py-1
+                                                    bg-gray-100
+                                                    border
+                                                    rounded
+                                                    w-full
+                                                "
                                                 :class="
                                                     isDragging
                                                         ? 'text-gray-600'
@@ -102,7 +134,14 @@
                                         </div>
                                         <div class="relative flex-grow">
                                             <svg
-                                                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"
+                                                class="
+                                                    text-gray-600
+                                                    w-4
+                                                    h-full
+                                                    mx-2
+                                                    absolute
+                                                    pointer-events-none
+                                                "
                                                 fill="none"
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
@@ -116,7 +155,14 @@
                                             </svg>
                                             <input
                                                 id="end_date"
-                                                class="flex-grow py-1 bg-gray-100 border rounded w-full"
+                                                class="
+                                                    flex-grow
+                                                    py-1
+                                                    bg-gray-100
+                                                    border
+                                                    rounded
+                                                    w-full
+                                                "
                                                 :class="
                                                     isDragging
                                                         ? 'text-gray-600'
@@ -199,9 +245,15 @@
         </div>
     </div>
     <div
-        class="card-footer d-flex justify-content-end"
+        class="card-footer d-flex"
+        id="table_footer"
         :class="type === 'dark' ? 'bg-transparent' : ''"
     >
+        <div>
+            <button class="btn btn-warning" @click="exportOrders">
+                Export
+            </button>
+        </div>
         <base-pagination
             :total="totalPages"
             @input="pageNumber"
@@ -213,6 +265,7 @@
 <script>
 import ErrorAlert from "../../components/ErrorAlert.vue";
 import { DatePicker } from "v-calendar";
+import xlsx from "xlsx";
 
 export default {
     components: {
@@ -250,36 +303,43 @@ export default {
             if (value.length) {
                 this.filteredOrders = this.orders.reduce((list, order) => {
                     if (
+                        order.order_number &&
                         order.order_number
                             .toLowerCase()
                             .includes(value.toLowerCase())
                     ) {
                         list.push(order);
                     } else if (
+                        order.name_cust &&
                         order.name_cust
                             .toLowerCase()
                             .includes(value.toLowerCase())
                     ) {
                         list.push(order);
                     } else if (
+                        order.type_send &&
                         order.type_send
                             .toLowerCase()
                             .includes(value.toLowerCase())
                     ) {
                         list.push(order);
                     } else if (
+                        order.tack_post &&
                         order.tack_post
                             .toLowerCase()
                             .includes(value.toLowerCase())
                     ) {
                         list.push(order);
                     } else if (
+                        order.status &&
                         order.status.toLowerCase().includes(value.toLowerCase())
                     ) {
                         list.push(order);
                     }
                     return list;
                 }, []);
+            } else {
+                this.filteredOrders = [];
             }
         },
     },
@@ -298,7 +358,11 @@ export default {
             return filteredOrders;
         },
         renderOrders() {
-            return this.sortOrdersByDate;
+            if (this.searchInput.length) return this.filteredOrders;
+            return this.sortOrdersByDate.slice(
+                (this.page - 1) * 10,
+                this.page * 10
+            );
         },
         renderPage() {
             if (this.searchInput.length) return this.searchedPage;
@@ -310,6 +374,50 @@ export default {
         },
     },
     methods: {
+        exportOrders() {
+            console.log("export");
+            console.log(this.orders);
+            const headers = Object.keys(this.orders[0]).filter(
+                (item) => !(parseInt(item) >= 0)
+            );
+            const headerHTML = headers.reduce((text, header) => {
+                text += `<th>${header}</th>`;
+                return text;
+            }, "");
+            const contentHTML = this.orders.reduce((text, order) => {
+                let orderInfo = headers.reduce((row, header) => {
+                    row += `<td>${order[header]}</td>`;
+                    return row;
+                }, "");
+                text += `<tr>${orderInfo}</tr>`;
+                return text;
+            }, "");
+            try {
+                const table = document.createElement("table");
+                table.innerHTML = `
+                <thead>
+                    <tr>${headerHTML}</tr>
+                </thead>
+                <tbody>
+                    ${contentHTML}
+                </tbody>
+            `;
+                const XLSX = xlsx;
+                const today = new Date();
+                const wb = XLSX.utils.table_to_book(table, {
+                    sheet: `orders`,
+                });
+                return XLSX.writeFile(
+                    wb,
+                    `soibear_orders_${today.getFullYear()}${
+                        today.getMonth() + 1
+                    }${today.getDate()}_${today.getHours()}${today.getMinutes()}${today.getSeconds()}.xlsx`
+                );
+            } catch (err) {
+                console.log(err);
+                alert(err);
+            }
+        },
         pageNumber(value) {
             if (this.searchInput.length) {
                 this.searchedPage = value;
@@ -366,7 +474,7 @@ export default {
         const startDate = new Date(yearToday, monthToday - 1, 1);
 
         this.range.start = startDate;
-        this.range.end = new Date(yearToday, monthToday, dateToday);
+        this.range.end = new Date(yearToday, monthToday, dateToday + 1);
     },
     async mounted() {
         this.isDataLoading = true;
@@ -497,5 +605,9 @@ form {
     background-color: green;
     color: #fff;
     border-radius: 5px;
+}
+
+#table_footer {
+    justify-content: space-between;
 }
 </style>
