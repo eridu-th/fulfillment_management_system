@@ -199,7 +199,7 @@
                         :key="carrier"
                         :value="carrier"
                       >
-                        {{ carrier.includes('EMS') ? 'EMS Postal' : carrier }}
+                        {{ logisticsOption(carrier) }}
                       </option>
                     </datalist>
                     <div class="invalid-feedback">
@@ -355,6 +355,7 @@ export default {
         'SCG',
         'Alpha',
         'ไปรษณีย์ EMS',
+        'แมสเซ็นเจอร์',
       ],
       sender: {
         name: '',
@@ -436,6 +437,11 @@ export default {
     },
   },
   methods: {
+    logisticsOption(carrier) {
+      if (carrier === 'แมสเซ็นเจอร์') return 'Messenger';
+      if (carrier.includes('EMS')) return 'EMS Postal';
+      return carrier;
+    },
     closeError() {
       this.isError = false;
       if (this.isCreateOrder) {
