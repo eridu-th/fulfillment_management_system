@@ -338,7 +338,7 @@ export default {
               barcode_number: row.product_code,
               amount: row.amount,
             });
-            orders[position].node = products;
+            orders[position].node = JSON.stringify(products);
           } else {
             orders.push({
               type: 'add_order',
@@ -373,33 +373,28 @@ export default {
       if (this.sheetData.length) {
         let counter = 0;
         let indexToRemove = 0;
-        let len = this.sheetData.length;
         let list = this.integrateSKUs(this.sheetData);
         for (let i = 0; i < list.length; i++) {
           this.errorTitle = 'Loading';
-          console.log(list[i]);
           const res = await this.$store.dispatch('carry/createOrder', list[i]);
-          // console.log(res);
           if (res.resCode === 200) {
             console.log(`an order is created! Order: ${list[i].order}`);
-            this.sheetData.forEach((data, index) => {
-              if (data.order === list[i].order) {
-                this.sheetData.splice(index, 1);
-              }
+            this.sheetData = this.sheetData.filter((data) => {
+              return data.order !== list[i].order;
             });
           } else {
             indexToRemove++;
             console.log(`an order creation failed! Order: ${list[i].order}`);
           }
           counter++;
-          let progress = (counter / len) * 100 + '%';
+          let progress = `${(counter / list.length) * 100} %`;
           this.errorMessage = progress;
         }
         this.errorTitle = `Process Finished`;
         let message = '';
         if (indexToRemove) {
           message = `${indexToRemove} ${
-            indexToRemove > 0 ? 'items' : 'item'
+            indexToRemove > 1 ? 'orders' : 'order'
           } failed to upload`;
         } else {
           message = 'All orders are created!';
