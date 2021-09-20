@@ -59,8 +59,8 @@
               <tr>
                 <th>order</th>
                 <th>sender_name</th>
-                <th>sender_address</th>
                 <th>sender_phone</th>
+                <th>sender_address</th>
                 <th>sender_postcode</th>
                 <th>receiver_name</th>
                 <th>receiver_address</th>
@@ -237,12 +237,12 @@ export default {
                 <tr>
                     <th>order</th>
                     <th>sender_name</th>
-                    <th>sender_address</th>
                     <th>sender_phone</th>
+                    <th>sender_address</th>
                     <th>sender_postcode</th>
                     <th>receiver_name</th>
-                    <th>receiver_address</th>
                     <th>receiver_phone</th>
+                    <th>receiver_address</th>
                     <th>receiver_postcode</th>
                     <th>receiver_logistics</th>
                     <th>receiver_cod</th>
@@ -254,8 +254,8 @@ export default {
                 <tr>
                     <td>1</td>
                     <td>John Doe</td>
-                    <td>88 Soi Sukhumvit 19, Khwaeng Khlong Toei Nuea, Khet Watthana, Bangkok 10110</td>
                     <td>'0987654321</td>
+                    <td>88 Soi Sukhumvit 19, Khwaeng Khlong Toei Nuea, Khet Watthana, Bangkok 10110</td>
                     <td>10110</td>
                     <td>Receiver1</td>
                     <td>999 หมู่ 1 Nong Prue, Bang Phli District, Samut Prakan 10540</td>
@@ -284,12 +284,12 @@ export default {
                 <tr>
                     <td>2</td>
                     <td>Smith Jane</td>
-                    <td>Grand Palace Na Phra Lan Road, Grand Palace Bangkok 10200</td>
                     <td>'0987654321</td>
+                    <td>Grand Palace Na Phra Lan Road, Grand Palace Bangkok 10200</td>
                     <td>10200</td>
                     <td>Receiver2</td>
-                    <td>Phahonyothin Rd, Thanon Phaya Thai, Ratchathewi, Bangkok 10400</td>
                     <td>'0123456789</td>
+                    <td>Phahonyothin Rd, Thanon Phaya Thai, Ratchathewi, Bangkok 10400</td>
                     <td>10400</td>
                     <td>Kerry</td>
                     <td></td>
